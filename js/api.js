@@ -1,6 +1,6 @@
 // ─── Config ──────────────────────────────────────────────
-const API_BASE = 'http://localhost:5000/api/v1';
-
+//const API_BASE = 'http://localhost:5000/api/v1';
+const API_BASE = 'https://hnd-backend.onrender.com/api/v1';
 // ─── Token helpers ────────────────────────────────────────
 const Auth = {
   getToken: () => localStorage.getItem('hnd_token'),
