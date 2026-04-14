@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HND — Ads Memory System</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%237c6aff'/><text y='.9em' font-size='70' x='12'>📊</text></svg>">
+</head>
+<body>
+
+<!-- ─── Toast Container ──────────────────────────────────── -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- ══════════════════════════════════════════════════════════
+     AUTH SECTION
+═══════════════════════════════════════════════════════════ -->
+<div id="auth-section" class="auth-page">
+  <div class="auth-bg-orb orb1"></div>
+  <div class="auth-bg-orb orb2"></div>
+
+  <!-- LOGIN -->
+  <div id="login-form-wrap" class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">📊</div>
+      <span class="auth-logo-text">HND<span style="color:var(--accent)">Ads</span></span>
+    </div>
+    <h1 class="auth-title">Welcome back</h1>
+    <p class="auth-subtitle">Sign in to your Ads Memory workspace</p>
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input id="login-email" type="email" class="form-input" placeholder="you@company.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="login-password" type="password" class="form-input" placeholder="••••••••" required>
+      </div>
+      <button id="login-btn" type="submit" class="btn btn-primary btn-full btn-lg">Sign In</button>
+    </form>
+    <p class="auth-footer">No account? <a href="#" onclick="showAuthPage('register')">Create one →</a></p>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="register-form-wrap" class="auth-card" style="display:none">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">📊</div>
+      <span class="auth-logo-text">HND<span style="color:var(--accent)">Ads</span></span>
+    </div>
+    <h1 class="auth-title">Create account</h1>
+    <p class="auth-subtitle">Set up your Ads Memory workspace</p>
+    <form id="register-form">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input id="reg-name" type="text" class="form-input" placeholder="John Doe" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input id="reg-email" type="email" class="form-input" placeholder="you@company.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select id="reg-role" class="form-select">
+            <option value="member">Member</option>
+            <option value="manager">Manager</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input id="reg-password" type="password" class="form-input" placeholder="Min 6 characters" required>
+      </div>
+      <button id="register-btn" type="submit" class="btn btn-primary btn-full btn-lg">Create Account</button>
+    </form>
+    <p class="auth-footer">Already have an account? <a href="#" onclick="showAuthPage('login')">Sign in →</a></p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MAIN APP
+═══════════════════════════════════════════════════════════ -->
+<div id="app-section" class="app-layout hidden" style="display:none">
+
+  <!-- ─── Sidebar ─────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">📊</div>
+      <span class="sidebar-logo-text">HND<span>Ads</span></span>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Main</div>
+      <div class="nav-item" data-page="dashboard" onclick="navigateTo('dashboard')">
+        <span class="nav-icon">🏠</span> Dashboard
+      </div>
+      <div class="nav-item" data-page="projects" onclick="navigateTo('projects')">
+        <span class="nav-icon">📁</span> Projects
+      </div>
+      <div class="nav-item" data-page="tasks" onclick="navigateTo('tasks')">
+        <span class="nav-icon">✅</span> My Tasks
+      </div>
+      <div class="nav-item" data-page="global-chat" onclick="navigateTo('global-chat')">
+        <span class="nav-icon">💬</span> Global Chat
+      </div>
+      <div class="nav-item" data-page="search" onclick="navigateTo('search')">
+        <span class="nav-icon">🔍</span> Search
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="padding-bottom:0">
+      <div class="sidebar-section-label">Projects</div>
+    </div>
+    <div class="sidebar-projects" id="sidebar-projects-list"></div>
+
+    <!-- Project sub-nav (shows when project selected) -->
+    <div id="project-subnav" style="padding:0 12px 12px;display:none">
+      <div class="sidebar-section-label" style="margin:8px 8px 4px">Project Menu</div>
+      <div class="nav-item" data-page="project-overview" onclick="openProjectTab('project-overview')"><span class="nav-icon">📊</span> Overview</div>
+      <div class="nav-item" data-page="project-chat" onclick="openProjectTab('project-chat')"><span class="nav-icon">💬</span> Chat</div>
+      <div class="nav-item" data-page="project-budget" onclick="openProjectTab('project-budget')"><span class="nav-icon">💰</span> Budget</div>
+      <div class="nav-item" data-page="project-changelog" onclick="openProjectTab('project-changelog')"><span class="nav-icon">📋</span> Change Log</div>
+      <div class="nav-item" data-page="project-adcopy" onclick="openProjectTab('project-adcopy')"><span class="nav-icon">📝</span> Ad Copies</div>
+      <div class="nav-item" data-page="project-keywords" onclick="openProjectTab('project-keywords')"><span class="nav-icon">🔑</span> Keywords</div>
+      <div class="nav-item" data-page="project-searchterms" onclick="openProjectTab('project-searchterms')"><span class="nav-icon">🔍</span> Search Terms</div>
+      <div class="nav-item" data-page="project-landingpages" onclick="openProjectTab('project-landingpages')"><span class="nav-icon">🌐</span> Landing Pages</div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="user-card" onclick="toggleDropdown('user-dropdown-menu')">
+        <div class="user-avatar" id="user-avatar-display">?</div>
+        <div class="user-info">
+          <div class="user-name" id="user-name-display">User</div>
+          <div class="user-role" id="user-role-display">member</div>
+        </div>
+        <div class="user-online-dot"></div>
+      </div>
+      <div class="dropdown-menu" id="user-dropdown-menu" style="bottom:64px;top:auto;left:12px;right:12px;min-width:unset">
+        <div class="dropdown-item danger" onclick="logout()">🚪 Sign Out</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── Main Content ──────────────────────────────────── -->
+  <main class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div style="flex:1">
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-secondary btn-sm" onclick="openModal('modal-create-project')">+ New Project</button>
+        <button class="btn btn-primary btn-sm" onclick="openModal('modal-create-task');populateTaskProjectSelect()">+ Task</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- ─── DASHBOARD ──────────────────────────────── -->
+      <div id="page-dashboard" class="page">
+        <div style="margin-bottom:24px">
+          <h2 class="font-display" style="font-size:22px;font-weight:800" id="dashboard-greeting">Good day!</h2>
+          <p class="text-muted" style="font-size:13px">Here's what's happening across your workspace.</p>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card accent">
+            <div class="stat-icon">📁</div>
+            <div class="stat-value" id="dashboard-proj-count">0</div>
+            <div class="stat-label">Active Projects</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="dashboard-tasks-count">0</div>
+            <div class="stat-label">Open Tasks</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-value" id="dashboard-urgent-count">0</div>
+            <div class="stat-label">Urgent / High Priority</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Open Tasks</div>
+                <div class="card-subtitle">Your pending work</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="navigateTo('tasks')">View all →</button>
+            </div>
+            <div id="dashboard-recent-tasks"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Projects</div>
+                <div class="card-subtitle">Your workspaces</div>
+              </div>
+              <button class="btn btn-ghost btn-sm" onclick="navigateTo('projects')">View all →</button>
+            </div>
+            <div id="dashboard-projects-list">
+              <div style="font-size:13px;color:var(--text-muted);padding:16px 0">Loading projects...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PROJECTS ───────────────────────────────── -->
+      <div id="page-projects" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Projects</h2>
+            <p class="text-muted" style="font-size:13px">Manage your Google Ads workspaces</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-create-project')">+ New Project</button>
+        </div>
+        <div id="projects-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px"></div>
+      </div>
+
+      <!-- ─── TASKS BOARD ────────────────────────────── -->
+      <div id="page-tasks" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">My Tasks</h2>
+            <p class="text-muted" style="font-size:13px">Tasks assigned to or created by you</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-create-task');populateTaskProjectSelect()">+ New Task</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+          <!-- Pending -->
+          <div>
+            <div class="flex items-center gap-8 mb-16">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--yellow);display:inline-block"></span>
+              <span class="font-display fw-700">Pending</span>
+              <span class="badge badge-yellow" id="tasks-count-pending">0</span>
+            </div>
+            <div id="tasks-col-pending"></div>
+          </div>
+          <!-- In Progress -->
+          <div>
+            <div class="flex items-center gap-8 mb-16">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--blue);display:inline-block"></span>
+              <span class="font-display fw-700">In Progress</span>
+              <span class="badge badge-blue" id="tasks-count-in-progress">0</span>
+            </div>
+            <div id="tasks-col-in-progress"></div>
+          </div>
+          <!-- Done -->
+          <div>
+            <div class="flex items-center gap-8 mb-16">
+              <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block"></span>
+              <span class="font-display fw-700">Done</span>
+              <span class="badge badge-green" id="tasks-count-done">0</span>
+            </div>
+            <div id="tasks-col-done"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── GLOBAL CHAT ────────────────────────────── -->
+      <div id="page-global-chat" class="page" style="height:calc(100vh - var(--topbar-height) - 56px)">
+        <div style="height:100%;display:flex;flex-direction:column;background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <span style="font-size:18px">🌍</span>
+            <div><div class="card-title">Global Chat</div><div class="card-subtitle">Team-wide conversation</div></div>
+          </div>
+          <div class="chat-messages" id="global-chat-list" style="flex:1;overflow-y:auto;padding:16px 20px"></div>
+          <div class="chat-input-area">
+            <div class="chat-input-wrap">
+              <textarea id="global-chat-input" class="chat-textarea" placeholder="Message everyone... (Enter to send)" rows="1"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="sendGlobalMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── SEARCH ─────────────────────────────────── -->
+      <div id="page-search" class="page">
+        <div class="mb-24">
+          <h2 class="font-display" style="font-size:20px;font-weight:800;margin-bottom:6px">Search</h2>
+          <p class="text-muted" style="font-size:13px">Search across keywords, ad copies, search terms, messages, and more</p>
+        </div>
+        <div class="search-bar" style="margin-bottom:24px;max-width:600px">
+          <span class="search-icon">🔍</span>
+          <input id="search-query" type="text" placeholder="Type to search... (min 2 characters)" style="font-size:15px">
+        </div>
+        <div id="search-results">
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <div class="empty-title">Start typing to search</div>
+            <div class="empty-desc">Search across keywords, ad copies, search terms, messages, change logs, and landing pages.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PROJECT OVERVIEW ──────────────────────── -->
+      <div id="page-project-overview" class="page">
+        <div class="flex items-center gap-16 mb-24" style="flex-wrap:wrap">
+          <div style="flex:1">
+            <h2 class="font-display" style="font-size:20px;font-weight:800" id="proj-overview-name">Project</h2>
+            <p class="text-muted" style="font-size:13px" id="proj-overview-desc"></p>
+          </div>
+          <div class="flex gap-8 items-center flex-wrap">
+            <span id="proj-overview-status"></span>
+            <button class="btn btn-secondary btn-sm" onclick="openEditProject(State.currentProject?._id)">✏️ Edit</button>
+            <button class="btn btn-secondary btn-sm" onclick="openModal('modal-add-member');loadTeamForSelect()">👥 Add Member</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card green">
+            <div class="stat-icon">💸</div>
+            <div class="stat-value" id="stat-yesterday-spend">—</div>
+            <div class="stat-label">Yesterday's Spend</div>
+          </div>
+          <div class="stat-card accent">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value" id="stat-today-allowed">—</div>
+            <div class="stat-label">Today's Allowed</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-value" id="stat-monthly-target">—</div>
+            <div class="stat-label">Monthly Target</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:24px" class="card">
+          <div class="flex items-center justify-between mb-16">
+            <div class="card-title">Monthly Budget Used</div>
+            <span id="stat-budget-pct" style="font-size:13px;font-weight:700;color:var(--text-secondary)">0%</span>
+          </div>
+          <div class="progress"><div class="progress-bar green" id="stat-budget-progress" style="width:0%"></div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Project Details</div>
+            </div>
+            <table style="width:100%;font-size:13px">
+              <tr><td style="padding:8px 0;color:var(--text-muted);width:120px">Budget</td><td class="fw-700" id="proj-overview-budget">—</td></tr>
+              <tr><td style="padding:8px 0;color:var(--text-muted)">Currency</td><td id="proj-overview-currency">—</td></tr>
+              <tr><td style="padding:8px 0;color:var(--text-muted)">Timezone</td><td id="proj-overview-timezone">—</td></tr>
+            </table>
+            <hr class="divider">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+              <button class="btn btn-secondary btn-sm" onclick="openProjectTab('project-budget')">💰 Budget</button>
+              <button class="btn btn-secondary btn-sm" onclick="openProjectTab('project-changelog')">📋 Changes</button>
+              <button class="btn btn-secondary btn-sm" onclick="openProjectTab('project-chat')">💬 Chat</button>
+              <button class="btn btn-secondary btn-sm" onclick="openProjectTab('project-adcopy')">📝 Ad Copy</button>
+              <button class="btn btn-secondary btn-sm" onclick="openProjectTab('project-keywords')">🔑 Keywords</button>
+              <button class="btn btn-secondary btn-sm" onclick="openProjectTab('project-searchterms')">🔍 Terms</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Team Members</div>
+              <button class="btn btn-ghost btn-sm" onclick="openModal('modal-add-member');loadTeamForSelect()">+ Add</button>
+            </div>
+            <div id="proj-members-list"></div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:20px">
+          <div class="card-header">
+            <div class="card-title">Recent Changes</div>
+            <button class="btn btn-ghost btn-sm" onclick="openProjectTab('project-changelog')">View all →</button>
+          </div>
+          <div id="recent-changes-list"></div>
+        </div>
+      </div>
+
+      <!-- ─── PROJECT CHAT ───────────────────────────── -->
+      <div id="page-project-chat" class="page" style="height:calc(100vh - var(--topbar-height) - 56px)">
+        <div style="height:100%;display:flex;flex-direction:column;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+          <div style="padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <span style="font-size:16px">💬</span>
+            <div style="flex:1"><div class="card-title" style="font-size:14px">Project Chat</div></div>
+            <button class="btn btn-ghost btn-sm" onclick="loadPinnedMessages()">📌 Pinned</button>
+            <button class="btn btn-ghost btn-sm" onclick="loadProjectChat()">↻ Refresh</button>
+          </div>
+          <div class="chat-messages" id="chat-messages-list" style="flex:1;overflow-y:auto;padding:16px 20px"></div>
+          <div style="padding:8px 16px;border-top:1px solid var(--border);display:flex;gap-8:gap;flex-wrap:wrap;background:var(--bg-secondary)">
+            <span style="font-size:11px;color:var(--text-muted);margin-right:8px">Tags:</span>
+            <div class="chat-tag-select" style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn btn-ghost btn-sm chat-tag" data-tag="budget_update" style="font-size:11px;padding:3px 10px">💰 Budget</button>
+              <button class="btn btn-ghost btn-sm chat-tag" data-tag="exclusion" style="font-size:11px;padding:3px 10px">🚫 Exclusion</button>
+              <button class="btn btn-ghost btn-sm chat-tag" data-tag="copy_change" style="font-size:11px;padding:3px 10px">📝 Copy</button>
+              <button class="btn btn-ghost btn-sm chat-tag" data-tag="issue" style="font-size:11px;padding:3px 10px">⚠️ Issue</button>
+              <button class="btn btn-ghost btn-sm chat-tag" data-tag="important" style="font-size:11px;padding:3px 10px">🔥 Important</button>
+            </div>
+          </div>
+          <div class="chat-input-area">
+            <div class="chat-input-wrap">
+              <label style="cursor:pointer;color:var(--text-muted);font-size:18px" title="Attach file">
+                📎
+                <input type="file" style="display:none" onchange="uploadChatFile(this.files[0])">
+              </label>
+              <textarea id="chat-input" class="chat-textarea" placeholder="Type a message... (Enter to send, Shift+Enter for new line)" rows="1"></textarea>
+              <button class="btn btn-primary btn-sm" onclick="sendProjectMessage()">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PROJECT BUDGET ─────────────────────────── -->
+      <div id="page-project-budget" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Budget Tracker</h2>
+            <p class="text-muted" style="font-size:13px">Daily spend tracking & monthly targets</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-add-budget');document.getElementById('b-date').value=new Date().toISOString().split('T')[0]">+ Log Today's Budget</button>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom:24px">
+          <div class="stat-card green"><div class="stat-icon">💸</div><div class="stat-value" id="budget-yesterday">—</div><div class="stat-label">Yesterday's Spend</div></div>
+          <div class="stat-card accent"><div class="stat-icon">✅</div><div class="stat-value" id="budget-today-allowed">—</div><div class="stat-label">Today Allowed</div></div>
+          <div class="stat-card blue"><div class="stat-icon">🎯</div><div class="stat-value" id="budget-month-target">—</div><div class="stat-label">Monthly Target</div></div>
+          <div class="stat-card yellow"><div class="stat-icon">📊</div><div class="stat-value" id="budget-month-spent">—</div><div class="stat-label">Month Spent</div></div>
+        </div>
+
+        <div class="card mb-24">
+          <div class="flex items-center justify-between mb-16">
+            <span class="card-title">Monthly Progress</span>
+            <span id="budget-progress-pct" style="font-weight:700;color:var(--text-secondary)">0%</span>
+          </div>
+          <div class="progress" style="height:10px"><div class="progress-bar green" id="budget-progress-bar" style="width:0%"></div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Budget History</div></div>
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Date</th><th>Yesterday Spend</th><th>Monthly Target</th><th>Month Spent</th><th>Today Allowed</th><th>Actions</th></tr></thead>
+              <tbody id="budget-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── CHANGE LOG ──────────────────────────────── -->
+      <div id="page-project-changelog" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Change Log</h2>
+            <p class="text-muted" style="font-size:13px">Track all campaign changes · <span id="changelog-total" class="text-accent">0 entries</span></p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-add-change');document.getElementById('cl-date').value=new Date().toISOString().split('T')[0]">+ Log Change</button>
+        </div>
+
+        <div class="card mb-16" style="padding:16px 20px">
+          <div class="flex items-center gap-12" style="flex-wrap:wrap">
+            <select class="form-select" style="width:200px" id="cl-filter-type" onchange="loadChangelog({type:this.value})">
+              <option value="">All Types</option>
+              <option value="search_term_excluded">Search Term Excluded</option>
+              <option value="keyword_added">Keyword Added</option>
+              <option value="keyword_paused">Keyword Paused</option>
+              <option value="keyword_removed">Keyword Removed</option>
+              <option value="ad_copy_updated">Ad Copy Updated</option>
+              <option value="budget_changed">Budget Changed</option>
+              <option value="bid_changed">Bid Changed</option>
+              <option value="campaign_paused">Campaign Paused</option>
+              <option value="campaign_enabled">Campaign Enabled</option>
+              <option value="landing_page_changed">Landing Page Changed</option>
+              <option value="other">Other</option>
+            </select>
+            <input class="form-input" type="date" id="cl-filter-from" style="width:160px" placeholder="From" onchange="loadChangelog({from:this.value,to:document.getElementById('cl-filter-to').value})">
+            <input class="form-input" type="date" id="cl-filter-to" style="width:160px" placeholder="To" onchange="loadChangelog({from:document.getElementById('cl-filter-from').value,to:this.value})">
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('cl-filter-type').value='';document.getElementById('cl-filter-from').value='';document.getElementById('cl-filter-to').value='';loadChangelog()">Clear</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Date</th><th>Type</th><th>Campaign</th><th>Ad Group</th><th>Details</th><th>Tags</th><th>Actions</th></tr></thead>
+              <tbody id="changelog-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── AD COPIES ──────────────────────────────── -->
+      <div id="page-project-adcopy" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Ad Copies</h2>
+            <p class="text-muted" style="font-size:13px">Version-controlled ad copy management</p>
+          </div>
+          <div class="flex gap-8">
+            <select class="form-select" style="width:160px" onchange="loadAdCopy({status:this.value})">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="testing">Testing</option>
+              <option value="paused">Paused</option>
+              <option value="archived">Archived</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal('modal-add-adcopy');initAdCopyForm()">+ New Ad Copy</button>
+          </div>
+        </div>
+        <div id="adcopy-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px"></div>
+      </div>
+
+      <!-- ─── KEYWORDS ───────────────────────────────── -->
+      <div id="page-project-keywords" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Keywords</h2>
+            <p class="text-muted" style="font-size:13px">Manage active, paused, and removed keywords</p>
+          </div>
+          <div class="flex gap-8">
+            <select class="form-select" style="width:140px" onchange="loadKeywords({matchType:this.value})">
+              <option value="">All Match Types</option>
+              <option value="broad">Broad</option>
+              <option value="phrase">Phrase</option>
+              <option value="exact">Exact</option>
+              <option value="broad_modified">Broad Modified</option>
+            </select>
+            <select class="form-select" style="width:130px" onchange="loadKeywords({status:this.value})">
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="removed">Removed</option>
+            </select>
+            <button class="btn btn-primary" onclick="openModal('modal-add-keyword')">+ Add Keyword</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Keyword</th><th>Match Type</th><th>Campaign</th><th>Ad Group</th><th>Status</th><th>Bid</th><th>Actions</th></tr></thead>
+              <tbody id="keywords-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── SEARCH TERMS ───────────────────────────── -->
+      <div id="page-project-searchterms" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Search Terms</h2>
+            <p class="text-muted" style="font-size:13px">Track excluded & promoted search terms · <span id="st-total" class="text-accent">0 terms</span></p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-add-searchterm');document.getElementById('st-date').value=new Date().toISOString().split('T')[0]">+ Log Search Term</button>
+        </div>
+        <div class="card mb-16" style="padding:16px 20px">
+          <div class="flex items-center gap-12" style="flex-wrap:wrap">
+            <div class="search-bar" style="flex:1;max-width:300px">
+              <span class="search-icon">🔍</span>
+              <input type="text" placeholder="Filter terms..." onchange="loadSearchTerms({search:this.value})">
+            </div>
+            <select class="form-select" style="width:180px" onchange="loadSearchTerms({action:this.value})">
+              <option value="">All Actions</option>
+              <option value="excluded">Excluded</option>
+              <option value="added_as_keyword">Added as Keyword</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Term</th><th>Action</th><th>Match Type</th><th>Campaign</th><th>Ad Group</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="searchterms-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── LANDING PAGES ──────────────────────────── -->
+      <div id="page-project-landingpages" class="page">
+        <div class="flex items-center justify-between mb-24">
+          <div>
+            <h2 class="font-display" style="font-size:20px;font-weight:800">Landing Pages</h2>
+            <p class="text-muted" style="font-size:13px">Track and version landing pages per campaign</p>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('modal-add-landing')">+ Add Landing Page</button>
+        </div>
+        <div class="card">
+          <div class="table-wrapper">
+            <table class="table">
+              <thead><tr><th>Title</th><th>URL</th><th>Campaign</th><th>Version</th><th>Status</th><th>Updated</th><th>Actions</th></tr></thead>
+              <tbody id="landing-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div><!-- /app-section -->
+
+<!-- ══════════════════════════════════════════════════════════
+     MODALS
+═══════════════════════════════════════════════════════════ -->
+
+<!-- Create Project -->
+<div id="modal-create-project" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create New Project</div>
+      <div class="modal-close" onclick="closeModal('modal-create-project')">×</div>
+    </div>
+    <form id="form-create-project">
+      <div class="form-group">
+        <label class="form-label">Project Name *</label>
+        <input id="cp-name" type="text" class="form-input" placeholder="e.g. Client X - Google Ads" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="cp-desc" class="form-textarea" placeholder="Brief project description..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Monthly Budget</label>
+          <input id="cp-budget" type="number" class="form-input" placeholder="50000" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Currency</label>
+          <select id="cp-currency" class="form-select">
+            <option value="INR">INR (₹)</option>
+            <option value="USD">USD ($)</option>
+            <option value="AUD">AUD (A$)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Timezone</label>
+          <select id="cp-timezone" class="form-select">
+            <option value="IST">IST</option>
+            <option value="US/Eastern">US/Eastern</option>
+            <option value="US/Pacific">US/Pacific</option>
+            <option value="US/Central">US/Central</option>
+            <option value="Australia/Sydney">Australia/Sydney</option>
+            <option value="UTC">UTC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Color</label>
+          <input id="cp-color" type="color" class="form-input" value="#7c6aff" style="height:44px;padding:4px 8px;cursor:pointer">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-create-project')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Project</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Project -->
+<div id="modal-edit-project" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Edit Project</div>
+      <div class="modal-close" onclick="closeModal('modal-edit-project')">×</div>
+    </div>
+    <form id="form-edit-project">
+      <input type="hidden" id="ep-id">
+      <div class="form-group">
+        <label class="form-label">Project Name *</label>
+        <input id="ep-name" type="text" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="ep-desc" class="form-textarea"></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Monthly Budget</label>
+          <input id="ep-budget" type="number" class="form-input" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Currency</label>
+          <select id="ep-currency" class="form-select">
+            <option value="INR">INR (₹)</option>
+            <option value="USD">USD ($)</option>
+            <option value="AUD">AUD (A$)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Timezone</label>
+          <select id="ep-timezone" class="form-select">
+            <option value="IST">IST</option>
+            <option value="US/Eastern">US/Eastern</option>
+            <option value="US/Pacific">US/Pacific</option>
+            <option value="US/Central">US/Central</option>
+            <option value="Australia/Sydney">Australia/Sydney</option>
+            <option value="UTC">UTC</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="ep-status" class="form-select">
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-edit-project')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Member -->
+<div id="modal-add-member" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Team Member</div>
+      <div class="modal-close" onclick="closeModal('modal-add-member')">×</div>
+    </div>
+    <form id="form-add-member">
+      <div class="form-group">
+        <label class="form-label">Team Member *</label>
+        <select id="member-user-select" class="form-select" required>
+          <option value="">Select team member</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select id="member-role" class="form-select">
+          <option value="editor">Editor</option>
+          <option value="viewer">Viewer</option>
+          <option value="owner">Owner</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-member')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Member</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Budget -->
+<div id="modal-add-budget" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Log Budget Entry</div>
+      <div class="modal-close" onclick="closeModal('modal-add-budget')">×</div>
+    </div>
+    <form id="form-add-budget">
+      <div class="form-group">
+        <label class="form-label">Date *</label>
+        <input id="b-date" type="date" class="form-input" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Yesterday's Spend</label>
+          <input id="b-yesterday" type="number" class="form-input" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Target *</label>
+          <input id="b-target" type="number" class="form-input" placeholder="50000" min="0" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Month Spent So Far</label>
+        <input id="b-spent" type="number" class="form-input" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="b-notes" class="form-textarea" placeholder="Optional notes..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-budget')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Entry</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Change Log -->
+<div id="modal-add-change" class="modal-overlay">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div class="modal-title">Log Change</div>
+      <div class="modal-close" onclick="closeModal('modal-add-change')">×</div>
+    </div>
+    <form id="form-add-change">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input id="cl-date" type="date" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Change Type *</label>
+          <select id="cl-type" class="form-select" required>
+            <option value="">Select type</option>
+            <option value="search_term_excluded">Search Term Excluded</option>
+            <option value="keyword_added">Keyword Added</option>
+            <option value="keyword_paused">Keyword Paused</option>
+            <option value="keyword_removed">Keyword Removed</option>
+            <option value="ad_copy_updated">Ad Copy Updated</option>
+            <option value="budget_changed">Budget Changed</option>
+            <option value="bid_changed">Bid Changed</option>
+            <option value="campaign_paused">Campaign Paused</option>
+            <option value="campaign_enabled">Campaign Enabled</option>
+            <option value="landing_page_changed">Landing Page Changed</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Campaign</label>
+          <input id="cl-campaign" type="text" class="form-input" placeholder="Campaign name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ad Group</label>
+          <input id="cl-adgroup" type="text" class="form-input" placeholder="Ad group name">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Old Value</label>
+          <input id="cl-old" type="text" class="form-input" placeholder="Before">
+        </div>
+        <div class="form-group">
+          <label class="form-label">New Value</label>
+          <input id="cl-new" type="text" class="form-input" placeholder="After">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Details</label>
+        <textarea id="cl-details" class="form-textarea" placeholder="Describe what was changed..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason</label>
+        <input id="cl-reason" type="text" class="form-input" placeholder="Why was this change made?">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="change-tag-cb" value="high_cpc"> <span class="badge badge-red">high_cpc</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="change-tag-cb" value="low_ctr"> <span class="badge badge-yellow">low_ctr</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="change-tag-cb" value="winning_copy"> <span class="badge badge-green">winning_copy</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="change-tag-cb" value="test"> <span class="badge badge-blue">test</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="change-tag-cb" value="important"> <span class="badge badge-accent">important</span></label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" class="change-tag-cb" value="mistake"> <span class="badge badge-gray">mistake</span></label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-change')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Log Change</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Ad Copy -->
+<div id="modal-add-adcopy" class="modal-overlay">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-header">
+      <div class="modal-title">New Ad Copy</div>
+      <div class="modal-close" onclick="closeModal('modal-add-adcopy')">×</div>
+    </div>
+    <form id="form-add-adcopy">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Campaign *</label>
+          <input id="ac-campaign" type="text" class="form-input" required placeholder="Campaign name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ad Group *</label>
+          <input id="ac-adgroup" type="text" class="form-input" required placeholder="Ad group name">
+        </div>
+      </div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label">Ad Type</label>
+          <select id="ac-adtype" class="form-select">
+            <option value="RSA">RSA</option>
+            <option value="ETA">ETA</option>
+            <option value="PMAX">PMAX</option>
+            <option value="DSA">DSA</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Version</label>
+          <input id="ac-version" type="text" class="form-input" placeholder="V1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="ac-status" class="form-select">
+            <option value="active">Active</option>
+            <option value="testing">Testing</option>
+            <option value="paused">Paused</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;justify-content:space-between">
+          Headlines <button type="button" class="btn btn-ghost btn-sm" onclick="addHeadlineField()" style="font-size:11px">+ Add</button>
+        </label>
+        <div id="ac-headlines-wrap"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" style="display:flex;align-items:center;justify-content:space-between">
+          Descriptions <button type="button" class="btn btn-ghost btn-sm" onclick="addDescField()" style="font-size:11px">+ Add</button>
+        </label>
+        <div id="ac-descs-wrap"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="ac-notes" class="form-textarea" placeholder="Internal notes about this ad copy..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-adcopy')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Ad Copy</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Ad Copy History -->
+<div id="modal-adcopy-history" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Ad Copy History</div>
+      <div class="modal-close" onclick="closeModal('modal-adcopy-history')">×</div>
+    </div>
+    <div id="adcopy-history-list"></div>
+  </div>
+</div>
+
+<!-- Add Keyword -->
+<div id="modal-add-keyword" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Keyword</div>
+      <div class="modal-close" onclick="closeModal('modal-add-keyword')">×</div>
+    </div>
+    <form id="form-add-keyword">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Campaign *</label>
+          <input id="kw-campaign" type="text" class="form-input" required placeholder="Campaign name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ad Group *</label>
+          <input id="kw-adgroup" type="text" class="form-input" required placeholder="Ad group">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Keyword *</label>
+        <input id="kw-keyword" type="text" class="form-input" required placeholder="e.g. running shoes">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Match Type *</label>
+          <select id="kw-matchtype" class="form-select" required>
+            <option value="exact">Exact</option>
+            <option value="phrase">Phrase</option>
+            <option value="broad">Broad</option>
+            <option value="broad_modified">Broad Modified</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="kw-status" class="form-select">
+            <option value="active">Active</option>
+            <option value="paused">Paused</option>
+            <option value="removed">Removed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bid Amount</label>
+        <input id="kw-bid" type="number" class="form-input" placeholder="0.00" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="kw-notes" class="form-textarea" placeholder="Optional notes..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-keyword')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Keyword</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Search Term -->
+<div id="modal-add-searchterm" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Log Search Term</div>
+      <div class="modal-close" onclick="closeModal('modal-add-searchterm')">×</div>
+    </div>
+    <form id="form-add-searchterm">
+      <div class="form-group">
+        <label class="form-label">Search Term *</label>
+        <input id="st-term" type="text" class="form-input" required placeholder="e.g. cheap running shoes">
+        <div id="st-dup-indicator"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Action *</label>
+          <select id="st-action" class="form-select" required>
+            <option value="excluded">Excluded</option>
+            <option value="added_as_keyword">Added as Keyword</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Match Type</label>
+          <select id="st-matchtype" class="form-select">
+            <option value="broad">Broad</option>
+            <option value="phrase">Phrase</option>
+            <option value="exact">Exact</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Campaign *</label>
+        <input id="st-campaign" type="text" class="form-input" required placeholder="Campaign name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ad Group</label>
+        <input id="st-adgroup" type="text" class="form-input" placeholder="Ad group (optional)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Date Actioned</label>
+          <input id="st-date" type="date" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <input id="st-reason" type="text" class="form-input" placeholder="Why excluded?">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-searchterm')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Term</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Landing Page -->
+<div id="modal-add-landing" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add Landing Page</div>
+      <div class="modal-close" onclick="closeModal('modal-add-landing')">×</div>
+    </div>
+    <form id="form-add-landing">
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input id="lp-title" type="text" class="form-input" required placeholder="e.g. Running Shoes LP V2">
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL *</label>
+        <input id="lp-url" type="url" class="form-input" required placeholder="https://example.com/page">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Campaign</label>
+          <input id="lp-campaign" type="text" class="form-input" placeholder="Campaign name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Version</label>
+          <input id="lp-version" type="text" class="form-input" placeholder="V1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select id="lp-status" class="form-select">
+          <option value="active">Active</option>
+          <option value="testing">Testing</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="lp-notes" class="form-textarea" placeholder="What's different about this version?"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-add-landing')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add Page</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Create Task -->
+<div id="modal-create-task" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Create Task</div>
+      <div class="modal-close" onclick="closeModal('modal-create-task')">×</div>
+    </div>
+    <form id="form-create-task">
+      <div class="form-group">
+        <label class="form-label">Task Title *</label>
+        <input id="task-title" type="text" class="form-input" required placeholder="What needs to be done?">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="task-desc" class="form-textarea" placeholder="More details..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select id="task-priority" class="form-select">
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+            <option value="high">High</option>
+            <option value="urgent">Urgent</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select id="task-status" class="form-select">
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Due Date</label>
+          <input id="task-due" type="date" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Project</label>
+          <select id="task-project" class="form-select">
+            <option value="">No project</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assign To</label>
+        <select id="task-assigned" class="form-select">
+          <option value="">Unassigned</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('modal-create-task')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Pinned Messages -->
+<div id="modal-pinned" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">📌 Pinned Messages</div>
+      <div class="modal-close" onclick="closeModal('modal-pinned')">×</div>
+    </div>
+    <div id="pinned-messages-list"></div>
+  </div>
+</div>
+
+<!-- ─── Scripts ──────────────────────────────────────────── -->
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/projects.js"></script>
+<script src="js/modules.js"></script>
+<script src="js/chat-tasks.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+// ─── Project subnav visibility ─────────────────────────
+const origNavigateTo = navigateTo;
+navigateTo = function(pageId, projectId) {
+  origNavigateTo(pageId, projectId);
+  const subnav = document.getElementById('project-subnav');
+  const isProjectPage = pageId.startsWith('project-');
+  subnav.style.display = (isProjectPage || State.currentProject) && pageId !== 'projects' ? 'block' : 'none';
+};
+
+// ─── Modal close on backdrop click ────────────────────
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal(overlay.id);
+  });
+});
+
+// ─── Chat tag toggle style ─────────────────────────────
+document.querySelectorAll('.chat-tag').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.classList.toggle('selected');
+    this.style.background = this.classList.contains('selected') ? 'var(--accent-dim)' : '';
+    this.style.color = this.classList.contains('selected') ? 'var(--accent)' : '';
+    this.style.borderColor = this.classList.contains('selected') ? 'var(--accent)' : '';
+  });
+});
+</script>
+</body>
+</html>
